@@ -1,0 +1,18 @@
+{
+  "name": "Wildlife Oracle",
+  "short_name": "Oracle",
+  "description": "A cinematic National Parks wildlife forecast app.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f1512",
+  "theme_color": "#14231f",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#14231f" />
+    <meta name="description" content="Wildlife Oracle is a cinematic National Parks PWA for forecasting wildlife sightings by park, season, habitat, and time of day." />
+    <title>Wildlife Oracle</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css?v=10" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+    <script src="./app.js?v=10" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar" aria-label="Wildlife Oracle header">
+        <button class="icon-button glass" type="button" id="backButton" aria-label="Back">
+          <i data-lucide="chevron-left"></i>
+        </button>
+        <div>
+          <p class="eyebrow">National Parks</p>
+          <h1>Wildlife Oracle</h1>
+        </div>
+        <button class="icon-button glass" type="button" id="shuffleButton" aria-label="Surprise me">
+          <i data-lucide="sparkles"></i>
+        </button>
+      </header>
+
+      <main>
+        <section class="view active" id="exploreView" aria-label="Explore parks">
+          <div class="hero-stack" id="parkHero"></div>
+          <div class="mood-strip" id="moodStrip" aria-label="Trip mood filters"></div>
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Field Notes</p>
+              <h2>Live-feeling park signals</h2>
+            </div>
+            <span id="parkCounter"></span>
+          </div>
+          <div class="park-list" id="parkList"></div>
+        </section>
+
+        <section class="view" id="oracleView" aria-label="Oracle forecast">
+          <div class="oracle-panel">
+            <div class="panel-copy">
+              <p class="eyebrow">Oracle Lens</p>
+              <h2>Forecast a sighting window</h2>
+              <p>Blend season, time, and habitat to surface the most likely wildlife encounters.</p>
+            </div>
+            <div class="oracle-score">
+              <span id="oracleScore">84</span>
+              <small>match</small>
+            </div>
+          </div>
+
+          <div class="control-grid" aria-label="Oracle controls">
+            <label>
+              <span>Season</span>
+              <select id="seasonSelect">
+                <option>Spring</option>
+                <option>Summer</option>
+                <option>Fall</option>
+                <option>Winter</option>
+              </select>
+            </label>
+            <label>
+              <span>Time</span>
+              <select id="timeSelect">
+                <option>Dawn</option>
+                <option>Midday</option>
+                <option>Dusk</option>
+                <option>Night</option>
+              </select>
+            </label>
+            <label class="wide">
+              <span>Habitat</span>
+              <input id="habitatRange" type="range" min="0" max="3" value="1" />
+              <b id="habitatLabel">Forest edge</b>
+            </label>
+          </div>
+
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Best Odds</p>
+              <h2>Species to watch now</h2>
+            </div>
+          </div>
+          <div class="species-grid" id="forecastGrid"></div>
+        </section>
+
+        <section class="view" id="detailView" aria-label="Park detail">
+          <article id="detailContent"></article>
+        </section>
+
+        <section class="view" id="savedView" aria-label="Saved watchlist">
+          <div class="saved-hero">
+            <p class="eyebrow">Watchlist</p>
+            <h2>Your quiet chances</h2>
+            <p>Saved parks and species stay here for trip dreaming, dawn alarms, and later planning.</p>
+          </div>
+          <div id="savedList" class="saved-list"></div>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" aria-label="Primary navigation">
+        <button class="nav-item active" type="button" data-view="exploreView">
+          <i data-lucide="map"></i>
+          <span>Explore</span>
+        </button>
+        <button class="nav-item" type="button" data-view="oracleView">
+          <i data-lucide="radar"></i>
+          <span>Oracle</span>
+        </button>
+        <button class="nav-item" type="button" data-view="savedView">
+          <i data-lucide="bookmark"></i>
+          <span>Saved</span>
+        </button>
+      </nav>
+    </div>
+  </body>
+</html>
