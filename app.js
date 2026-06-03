@@ -5,8 +5,8 @@ const parks = [
     region: "Wyoming, Montana, Idaho",
     mood: ["alpine", "dawn", "migration", "solitude"],
     image: "./assets/wildlife-oracle-hero.png",
-    accent: "#ff4d5e",
-    glow: "#ff8a8a",
+    accent: "#e6824d",
+    glow: "#f0a878",
     imagePosition: "52% 50%",
     signal: "thermal valley pulse",
     summary: "Thermal basins, river valleys, and high meadows make this the grand theater for big mammals.",
@@ -25,8 +25,8 @@ const parks = [
     region: "Florida",
     mood: ["wetland", "family-friendly", "dusk"],
     image: "./assets/wildlife-oracle-hero.png",
-    accent: "#ff8a8a",
-    glow: "#8f1f2d",
+    accent: "#e8a06a",
+    glow: "#b25a2f",
     imagePosition: "28% 44%",
     signal: "waterline rising",
     summary: "A slow river of grass where weather, waterline, and patience decide what appears.",
@@ -45,8 +45,8 @@ const parks = [
     region: "Washington",
     mood: ["forest", "dawn", "solitude"],
     image: "./assets/wildlife-oracle-hero.png",
-    accent: "#8f1f2d",
-    glow: "#ff4d5e",
+    accent: "#c2703a",
+    glow: "#e6824d",
     imagePosition: "66% 42%",
     signal: "rainforest corridor",
     summary: "Rainforest, glacier, and coast fold into one park, making every habitat feel like a portal.",
@@ -65,8 +65,8 @@ const parks = [
     region: "Arizona",
     mood: ["desert", "dusk", "family-friendly"],
     image: "./assets/wildlife-oracle-hero.png",
-    accent: "#ff2d3d",
-    glow: "#ff4d5e",
+    accent: "#ef6c3b",
+    glow: "#e6824d",
     imagePosition: "44% 56%",
     signal: "desert bloom clock",
     summary: "A desert observatory where silhouettes, heat, and flowering cactus shape the animal clock.",
@@ -246,20 +246,42 @@ const species = {
 
 const moods = ["all", "dawn", "dusk", "forest", "desert", "wetland", "alpine", "migration", "family-friendly", "solitude"];
 const habitatLabels = ["Open valley", "Forest edge", "River bend", "Wetland"];
+const seasonOptions = ["Spring", "Summer", "Fall", "Winter"];
+const timeOptions = ["Dawn", "Midday", "Dusk", "Night"];
+// Higher = harder to spot; used for the "Rarity" sort.
+const rarityRank = {
+  Common: 0, Likely: 1, Uncommon: 2, Seasonal: 3,
+  Rare: 4, Elusive: 5, Legendary: 6
+};
 const state = {
   view: "exploreView",
   activeMood: "all",
+  search: "",
+  sort: "odds",
   activePark: parks[0],
   season: "Spring",
   time: "Dawn",
   habitat: "Forest edge",
-  saved: JSON.parse(localStorage.getItem("wildlife-oracle-saved") || "[]")
+  saved: JSON.parse(localStorage.getItem("wildlife-oracle-saved") || "[]"),
+  seen: JSON.parse(localStorage.getItem("wildlife-oracle-seen") || "[]")
 };
 
 const $ = (selector) => document.querySelector(selector);
 
 function saveState() {
   localStorage.setItem("wildlife-oracle-saved", JSON.stringify(state.saved));
+  localStorage.setItem("wildlife-oracle-seen", JSON.stringify(state.seen));
+}
+
+let toastTimer;
+function showToast(message, icon = "check") {
+  const toast = $("#toast");
+  if (!toast) return;
+  toast.innerHTML = `<i data-lucide="${icon}"></i>${message}`;
+  toast.classList.add("show");
+  if (window.lucide) window.lucide.createIcons();
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
 }
 
 function isSaved(type, id) {
@@ -277,6 +299,28 @@ function toggleSaved(type, id, title, image, meta) {
   render();
 }
 
+function logSeen(id) {
+  const animal = species[id];
+  if (!animal) return;
+  state.seen.unshift({
+    id,
+    name: animal.name,
+    park: state.activePark.name,
+    season: state.season,
+    time: state.time,
+    date: new Date().toISOString()
+  });
+  saveState();
+  render();
+  showToast(`Logged ${animal.name}`, "eye");
+}
+
+function removeSeen(index) {
+  state.seen.splice(index, 1);
+  saveState();
+  render();
+}
+
 function scoreSpecies(animal) {
   let score = animal.baseChance;
   if (animal.seasons.includes(state.season)) score += 10;
@@ -286,6 +330,65 @@ function scoreSpecies(animal) {
   if (animal.habitats.includes(state.habitat)) score += 12;
   else score -= 6;
   return Math.max(5, Math.min(98, score));
+}
+
+// Search every season/time/habitat combination for the highest average odds
+// across the active park's species, then apply it to the controls.
+function applyBestWindow() {
+  let best = { avg: -1 };
+  for (const season of seasonOptions) {
+    for (const time of timeOptions) {
+      for (const habitat of habitatLabels) {
+        const prev = { season: state.season, time: state.time, habitat: state.habitat };
+        Object.assign(state, { season, time, habitat });
+        const avg = state.activePark.species
+          .reduce((sum, id) => sum + scoreSpecies(species[id]), 0) / state.activePark.species.length;
+        Object.assign(state, prev);
+        if (avg > best.avg) best = { avg, season, time, habitat };
+      }
+    }
+  }
+  Object.assign(state, { season: best.season, time: best.time, habitat: best.habitat });
+  syncControls();
+  render();
+  const readout = $("#windowReadout");
+  readout.innerHTML = `<i data-lucide="wand-sparkles"></i><span>Best window for ${state.activePark.name}: <b>${best.season} · ${best.time} · ${best.habitat}</b> (${Math.round(best.avg)}% avg)</span>`;
+  readout.classList.add("show");
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function randomizeWindow() {
+  state.season = seasonOptions[Math.floor(Math.random() * seasonOptions.length)];
+  state.time = timeOptions[Math.floor(Math.random() * timeOptions.length)];
+  state.habitat = habitatLabels[Math.floor(Math.random() * habitatLabels.length)];
+  syncControls();
+  render();
+  showToast("Surprise window rolled", "dices");
+}
+
+function shareForecast() {
+  const animals = state.activePark.species
+    .map((id) => ({ ...species[id], score: scoreSpecies(species[id]) }))
+    .sort((a, b) => b.score - a.score);
+  const avg = Math.round(animals.reduce((s, a) => s + a.score, 0) / animals.length);
+  const top = animals.slice(0, 3).map((a) => `${a.name} ${a.score}%`).join(", ");
+  const text = `Wildlife Oracle — ${state.activePark.name}\n${state.season} · ${state.time} · ${state.habitat}\nOverall match: ${avg}%\nTop odds: ${top}`;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(
+      () => showToast("Forecast copied", "clipboard-check"),
+      () => showToast("Copy failed", "x")
+    );
+  } else {
+    showToast("Clipboard unavailable", "x");
+  }
+}
+
+// Keep the form controls in sync with state (used by Best window / Surprise).
+function syncControls() {
+  $("#seasonSelect").value = state.season;
+  $("#timeSelect").value = state.time;
+  $("#habitatRange").value = String(habitatLabels.indexOf(state.habitat));
+  $("#habitatLabel").textContent = state.habitat;
 }
 
 function showView(viewId) {
@@ -343,11 +446,23 @@ function renderMoods() {
   `).join("");
 }
 
+function parkMatchesSearch(park) {
+  const q = state.search.trim().toLowerCase();
+  if (!q) return true;
+  const speciesNames = park.species.map((id) => species[id].name.toLowerCase()).join(" ");
+  return [park.name, park.region, park.mood.join(" "), park.signal, speciesNames]
+    .join(" ").toLowerCase().includes(q);
+}
+
 function renderParkList() {
-  const filtered = state.activeMood === "all"
-    ? parks
-    : parks.filter((park) => park.mood.includes(state.activeMood));
-  $("#parkCounter").textContent = `${filtered.length} parks`;
+  const filtered = parks
+    .filter((park) => state.activeMood === "all" || park.mood.includes(state.activeMood))
+    .filter(parkMatchesSearch);
+  $("#parkCounter").textContent = `${filtered.length} ${filtered.length === 1 ? "park" : "parks"}`;
+  if (!filtered.length) {
+    $("#parkList").innerHTML = `<div class="empty-state">No parks match that search yet. Try another name, region, or species.</div>`;
+    return;
+  }
   $("#parkList").innerHTML = filtered.map((park) => `
     <article class="park-row" role="button" tabindex="0" data-open-park="${park.id}" style="--park-accent:${park.accent}; --park-glow:${park.glow};">
       <img src="${park.image}" alt="${park.name} preview" style="object-position:${park.imagePosition};" />
@@ -365,9 +480,15 @@ function renderParkList() {
 function renderForecast() {
   const activeSpecies = state.activePark.species
     .map((id) => ({ id, ...species[id], score: scoreSpecies(species[id]) }))
-    .sort((a, b) => b.score - a.score);
+    .sort((a, b) => state.sort === "rarity"
+      ? rarityRank[b.rarity] - rarityRank[a.rarity] || b.score - a.score
+      : b.score - a.score);
   const average = Math.round(activeSpecies.reduce((total, animal) => total + animal.score, 0) / activeSpecies.length);
   $("#oracleScore").textContent = average;
+  const scoreRing = document.querySelector(".oracle-score");
+  if (scoreRing) scoreRing.style.setProperty("--avg", average);
+  document.querySelectorAll("#sortSeg button").forEach((btn) =>
+    btn.classList.toggle("active", btn.dataset.sort === state.sort));
   $("#forecastGrid").innerHTML = activeSpecies.map((animal) => `
     <article class="species-card" style="--score:${animal.score};">
       <img src="${animal.image}" alt="${animal.name}" />
@@ -377,9 +498,14 @@ function renderForecast() {
             <h3>${animal.name}</h3>
             <p><span class="rarity-chip">${animal.rarity}</span> ${state.activePark.name}</p>
           </div>
-          <button class="save-mini ${isSaved("species", animal.id) ? "active" : ""}" type="button" data-save-species="${animal.id}" aria-label="Save ${animal.name}">
-            <i data-lucide="bookmark"></i>
-          </button>
+          <div class="species-actions">
+            <button class="seen-mini" type="button" data-seen-species="${animal.id}" aria-label="Mark ${animal.name} as seen">
+              <i data-lucide="eye"></i>
+            </button>
+            <button class="save-mini ${isSaved("species", animal.id) ? "active" : ""}" type="button" data-save-species="${animal.id}" aria-label="Save ${animal.name}">
+              <i data-lucide="bookmark"></i>
+            </button>
+          </div>
         </div>
         <div class="chance" aria-label="${animal.score}% sighting match"><span style="width:${animal.score}%"></span></div>
         <div class="meter-label"><span>${animal.score}% sighting match</span><span>${animal.times[0]}</span></div>
@@ -442,9 +568,14 @@ function renderDetail() {
                   <h3>${animal.name}</h3>
                   <p><span class="rarity-chip">${animal.rarity}</span> ${animal.times.join(", ")}</p>
                 </div>
-                <button class="save-mini ${isSaved("species", id) ? "active" : ""}" type="button" data-save-species="${id}" aria-label="Save ${animal.name}">
-                  <i data-lucide="bookmark"></i>
-                </button>
+                <div class="species-actions">
+                  <button class="seen-mini" type="button" data-seen-species="${id}" aria-label="Mark ${animal.name} as seen">
+                    <i data-lucide="eye"></i>
+                  </button>
+                  <button class="save-mini ${isSaved("species", id) ? "active" : ""}" type="button" data-save-species="${id}" aria-label="Save ${animal.name}">
+                    <i data-lucide="bookmark"></i>
+                  </button>
+                </div>
               </div>
               <div class="chance"><span style="width:${score}%"></span></div>
               <div class="meter-label"><span>${score}% sighting match</span><span>${animal.habitats[0]}</span></div>
@@ -474,6 +605,43 @@ function renderSaved() {
   `).join("");
 }
 
+function renderJournal() {
+  $("#journalCount").textContent = state.seen.length
+    ? `${state.seen.length} logged`
+    : "";
+  if (!state.seen.length) {
+    $("#journalList").innerHTML = `<div class="empty-state">Tap the eye on any species to log a sighting with the date and conditions.</div>`;
+    return;
+  }
+  const fmt = (iso) => {
+    const d = new Date(iso);
+    return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  };
+  $("#journalList").innerHTML = state.seen.map((entry, index) => `
+    <article class="journal-card">
+      <div>
+        <h4>${entry.name}</h4>
+        <p>${entry.park} · ${entry.season} · ${entry.time}</p>
+      </div>
+      <time datetime="${entry.date}">${fmt(entry.date)}</time>
+      <button class="seen-mini" type="button" data-remove-seen="${index}" aria-label="Remove ${entry.name} from journal">
+        <i data-lucide="trash-2"></i>
+      </button>
+    </article>
+  `).join("");
+}
+
+function renderNavBadge() {
+  const badge = $("#savedBadge");
+  if (!badge) return;
+  if (state.saved.length) {
+    badge.textContent = state.saved.length;
+    badge.hidden = false;
+  } else {
+    badge.hidden = true;
+  }
+}
+
 function render() {
   renderHero();
   renderMoods();
@@ -481,6 +649,8 @@ function render() {
   renderForecast();
   renderDetail();
   renderSaved();
+  renderJournal();
+  renderNavBadge();
   showView(state.view);
 }
 
@@ -491,9 +661,25 @@ function bindEvents() {
     const parkOpen = event.target.closest("[data-open-park]");
     const parkSave = event.target.closest("[data-save-park]");
     const speciesSave = event.target.closest("[data-save-species]");
+    const speciesSeen = event.target.closest("[data-seen-species]");
     const removeSaved = event.target.closest("[data-remove-saved]");
+    const removeSeenBtn = event.target.closest("[data-remove-seen]");
+    const sortBtn = event.target.closest("[data-sort]");
 
     if (nav) showView(nav.dataset.view);
+    if (speciesSeen) {
+      logSeen(speciesSeen.dataset.seenSpecies);
+      event.stopPropagation();
+    }
+    if (removeSeenBtn) {
+      removeSeen(Number(removeSeenBtn.dataset.removeSeen));
+      event.stopPropagation();
+    }
+    if (sortBtn) {
+      state.sort = sortBtn.dataset.sort;
+      renderForecast();
+      if (window.lucide) window.lucide.createIcons();
+    }
     if (mood) {
       state.activeMood = mood.dataset.mood;
       render();
@@ -552,6 +738,16 @@ function bindEvents() {
     renderForecast();
     if (window.lucide) window.lucide.createIcons();
   });
+
+  $("#parkSearch").addEventListener("input", (event) => {
+    state.search = event.target.value;
+    renderParkList();
+    if (window.lucide) window.lucide.createIcons();
+  });
+
+  $("#bestWindowBtn").addEventListener("click", applyBestWindow);
+  $("#randomizeBtn").addEventListener("click", randomizeWindow);
+  $("#shareBtn").addEventListener("click", shareForecast);
 }
 
 if ("serviceWorker" in navigator) {
