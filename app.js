@@ -4,7 +4,7 @@ const parks = [
     name: "Yellowstone",
     region: "Wyoming, Montana, Idaho",
     mood: ["alpine", "dawn", "migration", "solitude"],
-    image: "./assets/wildlife-oracle-hero.png",
+    image: "./assets/parks/yellowstone.svg",
     accent: "#d81b72",
     glow: "#ff7ab8",
     imagePosition: "52% 50%",
@@ -24,7 +24,7 @@ const parks = [
     name: "Everglades",
     region: "Florida",
     mood: ["wetland", "family-friendly", "dusk"],
-    image: "./assets/wildlife-oracle-hero.png",
+    image: "./assets/parks/everglades.svg",
     accent: "#e92b85",
     glow: "#5c0b38",
     imagePosition: "28% 44%",
@@ -44,7 +44,7 @@ const parks = [
     name: "Olympic",
     region: "Washington",
     mood: ["forest", "dawn", "solitude"],
-    image: "./assets/wildlife-oracle-hero.png",
+    image: "./assets/parks/olympic.svg",
     accent: "#c21863",
     glow: "#d81b72",
     imagePosition: "66% 42%",
@@ -64,7 +64,7 @@ const parks = [
     name: "Saguaro",
     region: "Arizona",
     mood: ["desert", "dusk", "family-friendly"],
-    image: "./assets/wildlife-oracle-hero.png",
+    image: "./assets/parks/saguaro.svg",
     accent: "#ff3f95",
     glow: "#d81b72",
     imagePosition: "44% 56%",
@@ -85,7 +85,7 @@ const species = {
   "gray-wolf": {
     name: "Gray wolf",
     rarity: "Rare",
-    image: "./assets/wildlife-oracle-species.png",
+    image: "./assets/species/gray-wolf.svg",
     note: "Most visible across broad valleys when packs travel at first light.",
     seasons: ["Winter", "Spring"],
     times: ["Dawn", "Dusk"],
@@ -95,7 +95,7 @@ const species = {
   bison: {
     name: "Bison",
     rarity: "Common",
-    image: "./assets/wildlife-oracle-species.png",
+    image: "./assets/species/bison.svg",
     note: "Look for grazing herds near valley roads, especially during cool hours.",
     seasons: ["Spring", "Summer", "Fall"],
     times: ["Dawn", "Dusk", "Midday"],
@@ -105,7 +105,7 @@ const species = {
   grizzly: {
     name: "Grizzly bear",
     rarity: "Elusive",
-    image: "./assets/wildlife-oracle-species.png",
+    image: "./assets/species/grizzly.svg",
     note: "Spring slopes and berry season meadows raise the odds from very low to possible.",
     seasons: ["Spring", "Summer", "Fall"],
     times: ["Dawn", "Dusk"],
@@ -115,7 +115,7 @@ const species = {
   "trumpeter-swan": {
     name: "Trumpeter swan",
     rarity: "Seasonal",
-    image: "./assets/wildlife-oracle-species.png",
+    image: "./assets/species/trumpeter-swan.svg",
     note: "Quiet water and low wind make their bright shapes easiest to find.",
     seasons: ["Winter", "Spring"],
     times: ["Dawn", "Midday"],
@@ -125,7 +125,7 @@ const species = {
   "american-alligator": {
     name: "American alligator",
     rarity: "Common",
-    image: "./assets/wildlife-oracle-species.png",
+    image: "./assets/species/american-alligator.svg",
     note: "Sunny banks and low water concentrate sightings along boardwalks.",
     seasons: ["Winter", "Spring", "Summer"],
     times: ["Midday", "Dusk"],
@@ -135,7 +135,7 @@ const species = {
   manatee: {
     name: "Manatee",
     rarity: "Seasonal",
-    image: "./assets/wildlife-oracle-species.png",
+    image: "./assets/species/manatee.svg",
     note: "Warm protected water and calm surfaces reveal slow-moving backs and noses.",
     seasons: ["Winter", "Spring"],
     times: ["Dawn", "Midday"],
@@ -145,7 +145,7 @@ const species = {
   "roseate-spoonbill": {
     name: "Roseate spoonbill",
     rarity: "Uncommon",
-    image: "./assets/wildlife-oracle-species.png",
+    image: "./assets/species/roseate-spoonbill.svg",
     note: "Pink feeding flocks brighten shallow flats as water levels drop.",
     seasons: ["Winter", "Spring"],
     times: ["Dawn", "Dusk"],
@@ -155,7 +155,7 @@ const species = {
   "florida-panther": {
     name: "Florida panther",
     rarity: "Legendary",
-    image: "./assets/wildlife-oracle-species.png",
+    image: "./assets/species/florida-panther.svg",
     note: "Mostly a presence rather than a sighting; tracks and trail cameras tell the story.",
     seasons: ["Winter", "Spring", "Fall"],
     times: ["Dawn", "Night"],
@@ -165,7 +165,7 @@ const species = {
   "roosevelt-elk": {
     name: "Roosevelt elk",
     rarity: "Likely",
-    image: "./assets/wildlife-oracle-species.png",
+    image: "./assets/species/roosevelt-elk.svg",
     note: "Rainy meadows and river flats are the classic watch windows.",
     seasons: ["Spring", "Fall", "Winter"],
     times: ["Dawn", "Dusk"],
@@ -175,7 +175,7 @@ const species = {
   "harbor-seal": {
     name: "Harbor seal",
     rarity: "Likely",
-    image: "./assets/wildlife-oracle-species.png",
+    image: "./assets/species/harbor-seal.svg",
     note: "Scan offshore rocks at low tide with binoculars and a quiet stance.",
     seasons: ["Spring", "Summer", "Fall"],
     times: ["Midday", "Dusk"],
@@ -185,7 +185,7 @@ const species = {
   "bald-eagle": {
     name: "Bald eagle",
     rarity: "Likely",
-    image: "./assets/wildlife-oracle-species.png",
+    image: "./assets/species/bald-eagle.svg",
     note: "Follow salmon runs, open water, and high snags along river corridors.",
     seasons: ["Fall", "Winter", "Spring"],
     times: ["Dawn", "Midday"],
@@ -195,7 +195,7 @@ const species = {
   marmot: {
     name: "Olympic marmot",
     rarity: "Seasonal",
-    image: "./assets/wildlife-oracle-species.png",
+    image: "./assets/species/marmot.svg",
     note: "Warm subalpine afternoons bring whistles from meadow edges.",
     seasons: ["Summer"],
     times: ["Midday", "Dusk"],
@@ -205,7 +205,7 @@ const species = {
   "gila-woodpecker": {
     name: "Gila woodpecker",
     rarity: "Likely",
-    image: "./assets/wildlife-oracle-species.png",
+    image: "./assets/species/gila-woodpecker.svg",
     note: "Listen for calls around saguaro cavities and flowering desert trees.",
     seasons: ["Spring", "Summer"],
     times: ["Dawn", "Midday"],
@@ -215,7 +215,7 @@ const species = {
   javelina: {
     name: "Javelina",
     rarity: "Uncommon",
-    image: "./assets/wildlife-oracle-species.png",
+    image: "./assets/species/javelina.svg",
     note: "Family groups move through washes as the desert cools.",
     seasons: ["Spring", "Fall", "Winter"],
     times: ["Dusk", "Night", "Dawn"],
@@ -225,7 +225,7 @@ const species = {
   "lesser-long-nosed-bat": {
     name: "Lesser long-nosed bat",
     rarity: "Seasonal",
-    image: "./assets/wildlife-oracle-species.png",
+    image: "./assets/species/lesser-long-nosed-bat.svg",
     note: "Blooming saguaros and agaves set the night watch calendar.",
     seasons: ["Spring", "Summer"],
     times: ["Night", "Dusk"],
@@ -235,7 +235,7 @@ const species = {
   "desert-bighorn": {
     name: "Desert bighorn",
     rarity: "Rare",
-    image: "./assets/wildlife-oracle-species.png",
+    image: "./assets/species/desert-bighorn.svg",
     note: "Glass rocky ridges early, before heat pushes movement into shade.",
     seasons: ["Winter", "Spring", "Fall"],
     times: ["Dawn"],

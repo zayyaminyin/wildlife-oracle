@@ -1,4 +1,4 @@
-const CACHE_NAME = "wildlife-oracle-v12";
+const CACHE_NAME = "wildlife-oracle-v13";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -7,7 +7,27 @@ const APP_SHELL = [
   "./manifest.webmanifest",
   "./icon.svg",
   "./assets/wildlife-oracle-hero.png",
-  "./assets/wildlife-oracle-species.png"
+  "./assets/wildlife-oracle-species.png",
+  "./assets/parks/yellowstone.svg",
+  "./assets/parks/everglades.svg",
+  "./assets/parks/olympic.svg",
+  "./assets/parks/saguaro.svg",
+  "./assets/species/gray-wolf.svg",
+  "./assets/species/bison.svg",
+  "./assets/species/grizzly.svg",
+  "./assets/species/trumpeter-swan.svg",
+  "./assets/species/american-alligator.svg",
+  "./assets/species/manatee.svg",
+  "./assets/species/roseate-spoonbill.svg",
+  "./assets/species/florida-panther.svg",
+  "./assets/species/roosevelt-elk.svg",
+  "./assets/species/harbor-seal.svg",
+  "./assets/species/bald-eagle.svg",
+  "./assets/species/marmot.svg",
+  "./assets/species/gila-woodpecker.svg",
+  "./assets/species/javelina.svg",
+  "./assets/species/lesser-long-nosed-bat.svg",
+  "./assets/species/desert-bighorn.svg"
 ];
 
 self.addEventListener("install", (event) => {
