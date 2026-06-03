@@ -1,4 +1,4 @@
-const CACHE_NAME = "wildlife-oracle-v11";
+const CACHE_NAME = "wildlife-oracle-v12";
 const APP_SHELL = [
   "./",
   "./index.html",
