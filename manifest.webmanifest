@@ -4,8 +4,8 @@
   "description": "A cinematic National Parks wildlife forecast app.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0f1512",
-  "theme_color": "#14231f",
+  "background_color": "#120609",
+  "theme_color": "#120609",
   "orientation": "portrait-primary",
   "icons": [
     {
